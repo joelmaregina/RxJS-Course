@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { fromEvent, interval, noop, Observable, timer } from 'rxjs';
+import { concat, fromEvent, interval, merge, noop, Observable, of, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { createHttpObservable } from '../common/util';
 
@@ -14,6 +14,26 @@ export class AboutComponent implements OnInit {
 
   ngOnInit() {
 
+    const http$ = createHttpObservable('http://localhost:9000/api/courses', );
+
+    const sub = http$.subscribe(console.log)
+
+    setTimeout(() => sub.unsubscribe(), 0);
+
+    // // *************** MERGE *****************
+    // const interval1$ = interval(1000);
+    // const interval2$ = interval1$.pipe(map(val => 10 * val));
+    // const result$ = merge(interval1$, interval2$);
+    // result$.subscribe(console.log);
+
+    // // ************** CONCAT *****************
+    // const source1$ = of(1, 2, 3);
+    // const source2$ = of(4, 5, 6);
+    // const source3$ = of(7, 8, 9);
+    // // Only a blueprint of an stream of values, its needed to subscribe:
+    // const result$ = concat(source1$, source2$, source3$);
+
+    // result$.subscribe(console.log);
 
     // // The Basics of streams (Fluxo de valores):
     // // Uma stream que vai ser executada todas as vezes que um click na página for executado (stream sem fim)

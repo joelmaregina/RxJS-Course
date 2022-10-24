@@ -1,11 +1,20 @@
+import { ObserversModule } from "@angular/cdk/observers";
 import { Observable } from "rxjs";
 import { Course } from "../model/course";
 
-export function createHttpObservable(url: string){
+export function createHttpObservable(url){
   return new Observable ( subscriber => {
-    fetch('http://localhost:9000/api/courses')
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    fetch(url, {signal})
       .then(response => {
-        return response.json();
+        if(response.ok){
+            return response.json();
+        } else {
+          subscriber.error('Request failed with status code: ' + response.status);
+        }
       })
       .then(body => {
         subscriber.next(body);
@@ -13,7 +22,10 @@ export function createHttpObservable(url: string){
       })
       .catch( err =>{
         subscriber.error(err);
-      })
-  } );
+      });
+
+      return () => controller.abort()
+  });
+
 }
 
